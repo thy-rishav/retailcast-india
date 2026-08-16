@@ -13,17 +13,21 @@ pip install -r requirements.txt   # at Lilly, resolve this via Artifactory, not 
 ```
 
 This repo does not bundle the raw data (per the starter kit convention, it lives in a sibling
-`../data/` directory: `sales_train.csv`, `calendar.csv`, `sell_prices.csv`, `market_signal.csv`,
+`data/` directory: `sales_train.csv`, `calendar.csv`, `sell_prices.csv`, `market_signal.csv`,
 `vendor_signal.csv`, `sample_submission.csv`). Point `--data-dir` at wherever your copy lives.
+
+`submission.csv` at the repo root is already committed (see `retailcast_config.json`, the
+grading agent's manifest) so the file is scorable even without re-running the pipeline.
+Running the command below from a clean checkout regenerates it byte-for-byte the same way.
 
 ## Reproduce the submission
 
 ```bash
-python3 src/generate_submission.py --data-dir ../data --out output/submission.csv
-python3 validate_format.py --submission output/submission.csv --sample ../data/sample_submission.csv
+python3 src/generate_submission.py --data-dir data --out submission.csv
+python3 validate_format.py --submission submission.csv --sample data/sample_submission.csv
 ```
 
-(adjust `../data` to wherever the challenge data folder sits relative to this repo)
+(adjust `--data-dir` to wherever the challenge data folder sits relative to this repo)
 
 ## Reproduce the data audit (every claim in `approach_summary.md`)
 
@@ -52,19 +56,22 @@ why the ensemble was selected.
 ## Repo layout
 
 ```
-src/
-  data_loader.py        loading + launch-date detection (auto, per series)
-  features.py           calendar/event/price feature engineering + price-glitch guard
-  models.py             Model A (seasonal baseline), B (pooled GBM), C (ensemble)
-  metrics.py            RMSSE / WAPE implementations
-  backtest.py           head-to-head model comparison on held-out history
-  audit.py              reproduces every data-quality claim from raw data
-  generate_submission.py   trains the winning model on full history, writes submission.csv
-output/
-  submission.csv         final forecast
+retailcast_config.json   manifest: tells the grading agent how to run the pipeline
+submission.csv           committed final forecast (fallback if pipeline isn't re-run)
+requirements.txt
 approach_summary.md       technical decision log (the 7 required questions)
 validate_format.py        organizer-supplied format validator
+src/
+  data_loader.py          loading + launch-date detection (auto, per series)
+  features.py             calendar/event/price feature engineering + price-glitch guard
+  models.py               Model A (seasonal baseline), B (pooled GBM), C (ensemble)
+  metrics.py              RMSSE / WAPE implementations
+  backtest.py             head-to-head model comparison on held-out history
+  audit.py                reproduces every data-quality claim from raw data
+  generate_submission.py  trains the winning model on full history, writes submission.csv
 ```
+
+Note: `data/` (the raw CSVs) is intentionally not part of this repo — see Setup above.
 
 ## Key modelling decisions (see `approach_summary.md` for full reasoning)
 

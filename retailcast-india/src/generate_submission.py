@@ -8,7 +8,7 @@ beating both components individually and beating model B alone by a wide
 margin. See approach_summary.md Q4-Q5 for the full reasoning.
 
 Usage:
-    python3 generate_submission.py [--data-dir ../data] [--out ../output/submission.csv]
+    python3 generate_submission.py [--data-dir ../data] [--out ../submission.csv]
 """
 from __future__ import annotations
 import argparse
@@ -26,8 +26,11 @@ def main():
     args = ap.parse_args()
 
     here = os.path.dirname(os.path.abspath(__file__))
-    out_path = args.out or os.path.join(here, "..", "output", "submission.csv")
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    # defaults to the repo root, since the grading agent looks for submission.csv there
+    out_path = args.out or os.path.join(here, "..", "submission.csv")
+    out_dir = os.path.dirname(out_path)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
 
     print("[generate] loading data...", file=sys.stderr)
     sales = load_sales(args.data_dir)

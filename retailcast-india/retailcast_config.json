@@ -1,0 +1,21 @@
+{
+  "challenge_id": "retailcast-india",
+  "entrypoint": "src/generate_submission.py",
+  "run_command": "python3 src/generate_submission.py --data-dir {data_dir} --out submission.csv",
+  "language": "python3",
+  "requirements_file": "requirements.txt",
+  "data_dir_placeholder": "{data_dir}",
+  "data_files_expected": [
+    "sales_train.csv",
+    "calendar.csv",
+    "sell_prices.csv",
+    "market_signal.csv",
+    "vendor_signal.csv",
+    "sample_submission.csv"
+  ],
+  "output_file": "submission.csv",
+  "output_location": "repo_root",
+  "format_validator": "validate_format.py",
+  "validator_command": "python3 validate_format.py --submission submission.csv --sample {data_dir}/sample_submission.csv",
+  "notes": "submission.csv is also pre-committed at repo root as a fallback so the file is scorable even if the pipeline is not re-executed. Re-running run_command from a clean checkout with the challenge data directory reproduces it exactly."
+}
